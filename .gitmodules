@@ -1,0 +1,6 @@
+[submodule "cidenet_api"]
+	path = cidenet_api
+	url = git@github.com:Edw4rT0v4r/cidenet_api.git
+[submodule "cidenet_front"]
+	path = cidenet_front
+	url = git@github.com:Edw4rT0v4r/cidenet_front.git

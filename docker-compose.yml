@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      args:
+        user: application
+        uid: 1000
+      context: .
+      dockerfile: docker/server/Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./cidenet_front:/var/www/cidenet_front
+      - ./cidenet_api:/var/www/cidenet_api
+      #Virtual Hosts
+      - ./docker/server/apache/vhost:/etc/apache2/sites-enabled
+    extra_hosts:
+      - cidenet.api.local:127.0.0.1
+    links:
+      - db
+    ports:
+      - "80:80"
+      - "3000:3000"
+    networks:
+      back-network:
+        ipv4_address: 172.192.0.2
+
+  db:
+    image: mysql:8.0.25
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - /var/lib/mysql
+      - ./docker/db:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      back-network:
+        ipv4_address: 172.192.0.3
+
+networks:
+  back-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.192.0.0/16
